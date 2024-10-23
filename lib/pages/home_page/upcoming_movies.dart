@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/upcoming_movies/upcoming_bloc.dart';
 import '../../utils/constants.dart';
 import '../../loader_widgets/list_view_loader.dart';
+import '../../utils/locators.dart';
 import '../movies_list/movies_list_view.dart';
 import 'widgets/error_home_widget.dart';
 import 'widgets/list_view_widget.dart';
@@ -20,21 +21,17 @@ class _UpcomingMoviesState extends State<UpcomingMovies> {
   final ScrollController _upcomingMoviesScrollController = ScrollController();
 
   @override
-  /// This method is called when the object is inserted into the tree.
-  ///
-  /// It overrides the [State.initState] method and is used to initialize the
-  /// objects that need to be initialized when the widget is inserted in the
-  /// tree.
-  ///
-  /// In this case, it is used to fetch the upcoming movies from the server if
-  /// the state of the [_upcomingBloc] is either [UpcomingInitial] or
-  /// [UpcomingFetchError]. It also sets up the [_listenScrollActivity] method
-  /// as a listener for the [_upcomingMoviesScrollController].
+  /// This method is called when the widget is inserted into the tree. It
+  /// initializes the [_upcomingBloc] field with the bloc provided by
+  /// the parent widget, and it also fetches the movies from the
+  /// repository if the bloc is either in the initial state or
+  /// in an error state. After that, it sets up the [_listenScrollActivity]
+  /// method as a listener for the [_upcomingMoviesScrollController].
   ///
   /// This is a mandatory method for the [StatefulWidget] class.
   void initState() {
     super.initState();
-    _upcomingBloc = BlocProvider.of<UpcomingBloc>(context);
+    _upcomingBloc = locator<UpcomingBloc>();
     if (_upcomingBloc.state is UpcomingInitial ||
         _upcomingBloc.state is UpcomingFetchError) {
       _upcomingBloc.add(FetchUpcomingMovies());
@@ -59,6 +56,7 @@ class _UpcomingMoviesState extends State<UpcomingMovies> {
   }
 
   @override
+
   /// This method builds the UI for the upcoming movies widget. It
   /// returns a [BlocBuilder] widget that listens to the
   /// [UpcomingBloc] and builds the UI based on the state of the
@@ -79,7 +77,7 @@ class _UpcomingMoviesState extends State<UpcomingMovies> {
         return ErrorHomeWidget(
           title,
           state.error,
-          onRefresh: () => BlocProvider.of<UpcomingBloc>(context)
+          onRefresh: () =>locator<UpcomingBloc>()
               .add(RefreshUpcomingMovies()),
         );
       } else if (state is UpcomingFetched) {

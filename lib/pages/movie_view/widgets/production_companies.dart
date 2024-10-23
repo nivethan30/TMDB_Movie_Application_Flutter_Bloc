@@ -40,6 +40,7 @@ class ProductionCompanies extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => ImageViewerWidget(
                                 imageUrl: productionCompany.logoPath,
+                                name: productionCompany.name,
                                 backgroundColor: Colors.white,
                               )));
                 }

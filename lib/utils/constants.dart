@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import '../models/cast_model/cast_movie_model.dart';
 import '../models/movie_list_model/movie_list_model.dart';
 import '../models/movie_model/movie_model.dart';
+import '../models/video_model/video_movie_model.dart';
 
 /// Returns a sublist of the given list up to a maximum of 10 elements.
 List<MovieListModel> getSubList(List<MovieListModel> list) {
@@ -47,6 +48,11 @@ MovieModel defaultMovieModel = const MovieModel(
 CastMovieModel defaultCastMovieModel = CastMovieModel(
   movieId: -1,
   castList: [],
+);
+
+VideoMovieModel defaultVideoMovieModel = VideoMovieModel(
+  movieId: -1,
+  videoModel: []
 );
 
 final posterImageCacheManager = CacheManager(

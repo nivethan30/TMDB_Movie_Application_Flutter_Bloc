@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/popular_movies/popular_bloc.dart';
 import '../../utils/constants.dart';
 import '../../loader_widgets/carousel_loader.dart';
+import '../../utils/locators.dart';
 import '../movies_list/movies_list_view.dart';
 import 'widgets/caousel_widget.dart';
 import 'widgets/error_home_widget.dart';
@@ -19,6 +20,7 @@ class _PopularMoviesState extends State<PopularMovies> {
   late PopularBloc _popularBloc;
   final ScrollController _popularMoviesScrollController = ScrollController();
   @override
+
   /// This method is called when the widget is inserted into the tree. It
   /// initializes the [_popularBloc] field with the bloc provided by
   /// the parent widget, and it also fetches the movies from the
@@ -28,7 +30,7 @@ class _PopularMoviesState extends State<PopularMovies> {
   ///
   /// This is a mandatory method for the [StatefulWidget] class.
   void initState() {
-    _popularBloc = BlocProvider.of<PopularBloc>(context);
+    _popularBloc = locator<PopularBloc>();
     if (_popularBloc.state is PopularMoviesInitial ||
         _popularBloc.state is PopularFetchError) {
       _popularBloc.add(FetchPopularMovies());
@@ -54,6 +56,7 @@ class _PopularMoviesState extends State<PopularMovies> {
   }
 
   @override
+
   /// This method builds the UI for the popular movies widget. It
   /// returns a [BlocBuilder] widget that listens to the
   /// [PopularBloc] and builds the UI based on the state of the
@@ -81,7 +84,7 @@ class _PopularMoviesState extends State<PopularMovies> {
           title,
           state.error,
           onRefresh: () {
-            BlocProvider.of<PopularBloc>(context).add(RefreshPopularMovies());
+            locator<PopularBloc>().add(RefreshPopularMovies());
           },
         );
       } else if (state is PopularMoviesFetched) {

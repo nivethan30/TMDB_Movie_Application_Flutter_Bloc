@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/cast_details/cast_details_bloc.dart';
 import '../../bloc/movie_details/movie_details_bloc.dart';
+import '../../bloc/video_details/video_bloc.dart';
 import '../../models/movie_model/movie_model.dart';
 import '../../loader_widgets/movie_view_loader.dart';
+import '../../utils/locators.dart';
 import '../image_viewer/image_viewer.dart';
 import 'widgets/cast_details.dart';
 import 'widgets/collection_belong.dart';
@@ -11,6 +13,7 @@ import 'widgets/cover_image.dart';
 import 'widgets/movie_view_error.dart';
 import 'widgets/production_companies.dart';
 import 'widgets/title_image_card.dart';
+import 'widgets/video_details.dart';
 
 class MovieView extends StatefulWidget {
   final int randomId;
@@ -23,45 +26,42 @@ class MovieView extends StatefulWidget {
 
 class _MovieViewState extends State<MovieView> {
   @override
-  /// This method is called when the widget is inserted into the tree. It
-  /// fetches the movie details and the movie cast from the server.
+
+  /// This method is called when the widget is inserted into the tree.
   ///
-  /// The [MovieDetailsBloc] is used to fetch the movie details. The
-  /// [FetchMovieDetails] event is added to the bloc with the movie ID
-  /// passed as a parameter.
+  /// It overrides the [State.initState] method and is used to initialize the
+  /// objects that need to be initialized when the widget is inserted in the
+  /// tree.
   ///
-  /// The [CastDetailsBloc] is used to fetch the movie cast. The
-  /// [GetCastDetailsEvent] event is added to the bloc with the movie ID
-  /// passed as a parameter.
+  /// In this case, it is used to fetch the movie details, cast details, and
+  /// video details from the repository when the widget is inserted in the
+  /// tree.
   void initState() {
     super.initState();
-    BlocProvider.of<MovieDetailsBloc>(context)
-        .add(FetchMovieDetails(movieId: widget.movieId));
-    BlocProvider.of<CastDetailsBloc>(context)
+    locator<MovieDetailsBloc>().add(FetchMovieDetails(movieId: widget.movieId));
+    locator<CastDetailsBloc>()
         .add(GetCastDetailsEvent(movieId: widget.movieId));
+    locator<VideoBloc>().add(FetchVideoDetails(widget.movieId));
   }
 
   @override
-  /// This method builds a [Scaffold] that displays a [Container] with a black
-  /// background and a [SingleChildScrollView] as its child.
+
+  /// Builds the UI for the MovieView screen.
   ///
-  /// The [SingleChildScrollView] is used to display the movie details with
-  /// a [Stack] that contains a [coverImage] and a [titleImagePosterRow] as its
-  /// children. The [coverImage] displays the movie backdrop image and the
-  /// [titleImagePosterRow] displays the movie title, overview, release date
-  /// and poster image.
+  /// Returns a [Scaffold] with a transparent [AppBar] and a body that is a 
+  /// [BlocBuilder] listening to [MovieDetailsBloc]. 
   ///
-  /// The [SingleChildScrollView] also contains a [Column] that displays the
-  /// movie cast details, production companies, and the genres as a [Text].
+  /// The body displays different UI components based on the state of 
+  /// [MovieDetailsState]:
+  /// - [MovieDetailsLoading]: Shows a loading indicator using [movieViewLoader].
+  /// - [MovieDetailsError]: Shows an error message with a refresh option 
+  ///   using [movieViewError].
+  /// - [MovieDetailsFetched]: Displays movie details with a cover image, title, 
+  ///   overview, videos, cast details, and production companies.
   ///
-  /// The [Column] is padded with a [Padding] widget to provide a margin of 10
-  /// pixels on both sides of the screen.
-  ///
-  /// The [Scaffold] is extended behind the appbar to provide a seamless
-  /// transition between the appbar and the body of the screen. The appbar
-  /// is transparent and has a foreground color of white. The appbar elevation
-  /// is set to 0 to provide a seamless transition between the appbar and the
-  /// body of the screen.
+  /// The movie's backdrop image, title, and poster are shown in a [Stack]. 
+  /// Additional movie information is displayed in a [SingleChildScrollView] 
+  /// containing various widgets arranged in a [Column].
   Widget build(BuildContext context) {
     double scHeight = MediaQuery.of(context).size.height;
     double scWidth = MediaQuery.of(context).size.width;
@@ -81,7 +81,7 @@ class _MovieViewState extends State<MovieView> {
               child: movieViewError(
                   error: state.error,
                   onRefresh: () {
-                    BlocProvider.of<MovieDetailsBloc>(context)
+                    locator<MovieDetailsBloc>()
                         .add(FetchMovieDetails(movieId: widget.movieId));
                   }),
             );
@@ -107,6 +107,7 @@ class _MovieViewState extends State<MovieView> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => ImageViewerWidget(
+                                            name: movie.title,
                                             imageUrl: movie.backdropPath!)));
                               }
                             },
@@ -147,6 +148,17 @@ class _MovieViewState extends State<MovieView> {
                           const SizedBox(
                             height: 20,
                           ),
+                          if (VideoBloc.videos.isNotEmpty)
+                            const Text(
+                              'Videos',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                          if (VideoBloc.videos.isNotEmpty)
+                            VideoDetails(
+                              movieId: movie.id,
+                            ),
+                          const SizedBox(height: 20),
                           const Text(
                             'Cast Details',
                             style: TextStyle(

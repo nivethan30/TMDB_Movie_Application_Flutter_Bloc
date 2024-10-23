@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/top_rated_movies/top_rated_bloc.dart';
 import '../../utils/constants.dart';
 import '../../loader_widgets/list_view_loader.dart';
+import '../../utils/locators.dart';
 import '../movies_list/movies_list_view.dart';
 import 'widgets/error_home_widget.dart';
 import 'widgets/list_view_widget.dart';
@@ -32,7 +33,7 @@ class _TopRatedMoviesState extends State<TopRatedMovies> {
   /// This is a mandatory method for the [StatefulWidget] class.
   void initState() {
     super.initState();
-    _topRatedBloc = BlocProvider.of<TopRatedBloc>(context);
+    _topRatedBloc = locator<TopRatedBloc>();
     if (_topRatedBloc.state is TopRatedInitial ||
         _topRatedBloc.state is TopRatedFetchError) {
       _topRatedBloc.add(FetchTopRatedMovies());
@@ -82,7 +83,7 @@ class _TopRatedMoviesState extends State<TopRatedMovies> {
           title,
           state.error,
           onRefresh: () {
-            BlocProvider.of<TopRatedBloc>(context).add(RefreshTopRatedMovies());
+            locator<TopRatedBloc>().add(RefreshTopRatedMovies());
           },
         );
       } else if (state is TopRatedFetched) {

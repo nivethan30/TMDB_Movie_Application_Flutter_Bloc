@@ -4,21 +4,33 @@ import 'package:photo_view/photo_view.dart';
 
 class ImageViewerWidget extends StatelessWidget {
   final String? imageUrl;
+  final String name;
   final Color backgroundColor;
   const ImageViewerWidget(
-      {super.key, required this.imageUrl, this.backgroundColor = Colors.black});
+      {super.key, required this.imageUrl, this.backgroundColor = Colors.black, required this.name});
 
   @override
-  /// Returns a Scaffold widget with a transparent AppBar and a CachedNetworkImage
-  /// widget or a Text widget with a message 'No image available' if the imageUrl
-  /// is null or empty. The CachedNetworkImage widget displays a loader while the
-  /// image is being loaded and displays an error icon if the image can't be loaded.
-  /// The image is displayed in a PhotoView widget with a minScale and maxScale set
-  /// to PhotoViewComputedScale.contained and PhotoViewComputedScale.covered * 2
-  /// respectively, and a background color set to the backgroundColor parameter.
-  /// The foreground color of the AppBar is set to white if the backgroundColor
-  /// is black, otherwise it is set to black. The Scaffold has its extendBodyBehindAppBar
-  /// property set to true, and the AppBar has its elevation property set to 0.
+
+  /// Builds a [Scaffold] that displays an image in a [PhotoView].
+  ///
+  /// If [imageUrl] is null or empty, a [Center] widget with a [Text] widget
+  /// displaying "No image available" is used instead.
+  ///
+  /// The image is loaded from the path specified in [imageUrl] from the
+  /// [TMDB] server.
+  ///
+  /// The [AppBar] displays the [name] of the movie, and the foreground color
+  /// is adjusted based on the [backgroundColor] of the [Scaffold].
+  ///
+  /// The [PhotoView] is configured to use the [backgroundColor] of the
+  /// [Scaffold] as its background color, and the image is scaled to fit the
+  /// [PhotoView] using the [PhotoViewComputedScale.contained] strategy. The
+  /// image can be zoomed up to twice its original size using the
+  /// [PhotoViewComputedScale.covered] * 2 strategy.
+  ///
+  /// A [CircularProgressIndicator] is used as the placeholder widget until
+  /// the image is loaded, and an [Icon] of [Icons.error] is used as the error
+  /// widget if the image fails to load.
   Widget build(BuildContext context) {
     if (imageUrl == null || imageUrl!.isEmpty) {
       return Scaffold(
@@ -37,6 +49,7 @@ class ImageViewerWidget extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        title: Text(name),
         foregroundColor:
             backgroundColor == Colors.black ? Colors.white : Colors.black,
         backgroundColor: Colors.transparent,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../bloc/cast_details/cast_details_bloc.dart';
 import '../../../models/cast_model/cast_model.dart';
+import '../../../utils/locators.dart';
 import '../../image_viewer/image_viewer.dart';
 
 class CastDetails extends StatelessWidget {
@@ -45,7 +46,7 @@ class CastDetails extends StatelessWidget {
               TextButton(
                 child: const Text('Retry'),
                 onPressed: () {
-                  BlocProvider.of<CastDetailsBloc>(context)
+                  locator<CastDetailsBloc>()
                       .add(GetCastDetailsEvent(movieId: movieId));
                 },
               ),
@@ -68,6 +69,7 @@ class CastDetails extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ImageViewerWidget(
+                                name:cast.name,
                                   imageUrl: cast.profilePath)));
                     }
                   },

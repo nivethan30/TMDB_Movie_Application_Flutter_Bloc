@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../utils/locators.dart';
 import '../../bloc/search_movies/search_movies_bloc.dart';
 import '../../loader_widgets/grid_view_loader.dart';
 import '../movies_list/widgets/grid_view_widget.dart';
@@ -18,19 +19,22 @@ class _SearchPageState extends State<SearchPage> {
   final FocusNode _textFieldFocus = FocusNode();
 
   @override
-  /// This method is called when the widget is inserted into the tree. It
-  /// initializes the [_searchMoviesBloc] field with the bloc provided by
-  /// the parent widget, and it also sets up the [_listenScrollActivity] method
-  /// as a listener for the [_searchScrollController].
-  /// 
-  /// This is a mandatory method for the [StatefulWidget] class.
+
+/// Initializes the state of the search page.
+///
+/// This method is called when the widget is inserted into the widget tree.
+/// It obtains the [SearchMoviesBloc] instance from the service locator and
+/// assigns it to the [_searchMoviesBloc] field. It also sets up the
+/// [_listenScrollActivity] method to listen for scroll activity on the
+/// search results list.
   void initState() {
     super.initState();
-    _searchMoviesBloc = BlocProvider.of<SearchMoviesBloc>(context);
+    _searchMoviesBloc = locator<SearchMoviesBloc>();
     _listenScrollActivity();
   }
 
   @override
+
   /// This method is called when the widget is removed from the tree. It
   /// disposes the [_textFieldFocus] and [_controller] fields to free up
   /// memory.
@@ -61,6 +65,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   @override
+
   /// This method builds the UI for the search page. It returns a [Scaffold]
   /// widget with an [AppBar] and a [Column] containing a [TextField] and an
   /// [Expanded] widget containing a [BlocBuilder] widget. The [BlocBuilder]
@@ -112,7 +117,7 @@ class _SearchPageState extends State<SearchPage> {
                       },
                       onChanged: (value) {
                         if (value.isNotEmpty) {
-                          BlocProvider.of<SearchMoviesBloc>(context).add(
+                          locator<SearchMoviesBloc>().add(
                               SearchMoviesQueryEvent(query: _controller.text));
                         }
                       },
@@ -139,6 +144,7 @@ class _SearchPageState extends State<SearchPage> {
                   );
                 } else {
                   return moviesGridView(
+                      isLoading: false,
                       moviesList: state.movieList,
                       randomId: 5,
                       scrollController: _searchScrollController);

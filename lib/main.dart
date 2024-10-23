@@ -7,23 +7,16 @@ import 'bloc/movie_details/movie_details_bloc.dart';
 import 'bloc/popular_movies/popular_bloc.dart';
 import 'bloc/top_rated_movies/top_rated_bloc.dart';
 import 'bloc/upcoming_movies/upcoming_bloc.dart';
+import 'bloc/video_details/video_bloc.dart';
 import 'pages/splash_screen/splash_screen.dart';
-import 'repository/cast_api.dart';
-import 'repository/movie_api.dart';
-import 'repository/movie_list_api.dart';
-import 'repository/search_api.dart';
+import 'utils/locators.dart';
 import 'utils/theme.dart';
 
-/// The main entry point for the application.
-///
-/// This function does the following:
-///
-/// 1. Ensures that the widgets binding is initialized.
-/// 2. Loads the environment variables from the file at
-///    `assets/env/.env`.
-/// 3. Runs the application with the root widget as a [MyApp].
+/// The main function initializes the Flutter app by ensuring the initialization of widgets,
+/// setting up locators, loading environment variables from the .env file, and running the app.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  setupLocators();
   await dotenv.load(fileName: "assets/env/.env");
   runApp(const MyApp());
 }
@@ -32,38 +25,33 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  /// This is the root widget of the application. It sets up the blocs of the
-  /// application and sets up the theme. The theme is set to dark mode, and the
-  /// home widget is set to [SplashScreen].
+  /// The build method returns a [MaterialApp] widget as the root of the app,
+  /// with a [MultiBlocProvider] as its child. The [MultiBlocProvider]
+  /// provides the BLoC instances for the app, which are:
   ///
-  /// It also sets up the providers of the blocs of the application. The
-  /// providers are as follows:
+  /// 1. [PopularBloc] to handle popular movies.
+  /// 2. [TopRatedBloc] to handle top rated movies.
+  /// 3. [UpcomingBloc] to handle upcoming movies.
+  /// 4. [MovieDetailsBloc] to handle movie details.
+  /// 5. [CastDetailsBloc] to handle cast details.
+  /// 6. [SearchMoviesBloc] to handle search movies.
+  /// 7. [VideoBloc] to handle video details.
   ///
-  /// - [PopularBloc] is a bloc that fetches the popular movies from the
-  ///   server.
-  /// - [TopRatedBloc] is a bloc that fetches the top rated movies from the
-  ///   server.
-  /// - [UpcomingBloc] is a bloc that fetches the upcoming movies from the
-  ///   server.
-  /// - [MovieDetailsBloc] is a bloc that fetches the movie details from the
-  ///   server.
-  /// - [CastDetailsBloc] is a bloc that fetches the movie cast from the
-  ///   server.
-  /// - [SearchMoviesBloc] is a bloc that fetches the search results from the
-  ///   server.
+  /// The [MaterialApp] is configured with the title of the app, theme, dark
+  /// theme, and theme mode. The theme mode is set to [ThemeMode.dark] to
+  /// apply the dark theme by default. The home of the app is a [SplashScreen]
+  /// widget, which is the first screen that the user sees when the app is
+  /// launched.
   Widget build(BuildContext context) {
-    final MovieListApi movieListApi = MovieListApi();
-    final MovieApi movieApi = MovieApi();
-    final CastApi castApi = CastApi();
-    final SearchApi searchApi = SearchApi();
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => PopularBloc(movieListApi)),
-        BlocProvider(create: (context) => TopRatedBloc(movieListApi)),
-        BlocProvider(create: (context) => UpcomingBloc(movieListApi)),
-        BlocProvider(create: (context) => MovieDetailsBloc(movieApi)),
-        BlocProvider(create: (context) => CastDetailsBloc(castApi)),
-        BlocProvider(create: (context) => SearchMoviesBloc(searchApi)),
+        BlocProvider(create: (context) => locator<PopularBloc>()),
+        BlocProvider(create: (context) => locator<TopRatedBloc>()),
+        BlocProvider(create: (context) => locator<UpcomingBloc>()),
+        BlocProvider(create: (context) => locator<MovieDetailsBloc>()),
+        BlocProvider(create: (context) => locator<CastDetailsBloc>()),
+        BlocProvider(create: (context) => locator<SearchMoviesBloc>()),
+        BlocProvider(create: (context) => locator<VideoBloc>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

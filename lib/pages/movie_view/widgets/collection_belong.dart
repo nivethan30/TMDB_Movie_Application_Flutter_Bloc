@@ -31,7 +31,7 @@ Widget collectionBelong(
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ImageViewerWidget(
+                      builder: (context) => ImageViewerWidget(name: movie.title,
                           imageUrl: movie.belongsToCollection!.backdropPath)));
             }
           },

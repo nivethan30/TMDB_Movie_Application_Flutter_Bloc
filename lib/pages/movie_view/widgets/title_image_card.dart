@@ -36,7 +36,7 @@ Widget titleImagePosterRow(BuildContext context,
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        ImageViewerWidget(imageUrl: movie.posterPath!)));
+                        ImageViewerWidget(imageUrl: movie.posterPath!,name: movie.title,)));
           }
         },
         child: Hero(
